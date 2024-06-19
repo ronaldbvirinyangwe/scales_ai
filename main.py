@@ -1,5 +1,5 @@
 import streamlit as st
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForCausalLM
 from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
 
@@ -9,10 +9,9 @@ embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 # Load the model configuration and weights with error handling
 try:
     # Ensure the paths are correct and the files exist at the specified locations
-    config = PeftConfig.from_pretrained("scaleszw/scales_ai")
-    base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
-    model = PeftModel.from_pretrained(base_model, "scaleszw/scales_ai")
+# Load model directly
     tokenizer = AutoTokenizer.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
+    model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
 except ValueError as e:
     st.error(f"Error loading model: {e}")
     st.stop()
