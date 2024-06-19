@@ -9,13 +9,18 @@ embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 # Load the model configuration and weights with error handling
 try:
     # Ensure the paths are correct and the files exist at the specified locations
-# Load model directly
     tokenizer = AutoTokenizer.from_pretrained("scaleszw/scales_ai")
     config = PeftConfig.from_pretrained("scaleszw/scales_ai")
     base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
     model = PeftModel.from_pretrained(base_model, "scaleszw/scales_ai")
 except ValueError as e:
     st.error(f"Error loading model: {e}")
+    st.stop()
+except FileNotFoundError as e:
+    st.error(f"File not found: {e}")
+    st.stop()
+except Exception as e:
+    st.error(f"An unexpected error occurred: {e}")
     st.stop()
 
 class ConversationState:
