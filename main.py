@@ -6,11 +6,15 @@ from peft import PeftModel, PeftConfig
 # Choose an embedding model
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Load the model configuration and weights
-config = PeftConfig.from_pretrained("scaleszw/scales_ai")
-base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
-model = PeftModel.from_pretrained(base_model, "scaleszw/scales_ai")
-tokenizer = AutoTokenizer.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
+# Load the model configuration and weights with error handling
+try:
+    config = PeftConfig.from_pretrained("scaleszw/scales_ai")
+    base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
+    model = PeftModel.from_pretrained(base_model, "scaleszw/scales_ai")
+    tokenizer = AutoTokenizer.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
+except ValueError as e:
+    st.error(f"Error loading model: {e}")
+    st.stop()
 
 class ConversationState:
     def __init__(self):
