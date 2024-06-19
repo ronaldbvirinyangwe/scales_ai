@@ -11,7 +11,7 @@ try:
     # Ensure the paths are correct and the files exist at the specified locations
     config = PeftConfig.from_pretrained("scaleszw/scales_ai")
     base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
-    model = PeftModel.from_pretrained(base_model, "scaleszw/scales_ai")
+    model = PeftModel.from_pretrained(base_model,)
     tokenizer = AutoTokenizer.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
 except ValueError as e:
     st.error(f"Error loading model: {e}")
