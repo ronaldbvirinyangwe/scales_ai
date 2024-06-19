@@ -1,15 +1,11 @@
+import os
 import streamlit as st
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
-from huggingface_hub import HfApi, login
 
-# Add your Hugging Face token here
-hf_token = "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"
-
-# Authenticate with Hugging Face
-login(token=hf_token)
-
+# Set the Hugging Face token
+os.environ['HUGGINGFACE_HUB_TOKEN'] = 'your_huggingface_token_here'
 
 # Choose an embedding model
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -17,10 +13,10 @@ embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 # Load the model configuration and weights with error handling
 try:
     # Ensure the paths are correct and the files exist at the specified locations
-    tokenizer = AutoTokenizer.from_pretrained("scaleszw/scales_ai")
-    config = PeftConfig.from_pretrained("scaleszw/scales_ai")
-    base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit")
-    model = PeftModel.from_pretrained(base_model, "scaleszw/scales_ai")
+    tokenizer = AutoTokenizer.from_pretrained("scaleszw/scales_ai", use_auth_token=True)
+    config = PeftConfig.from_pretrained("scaleszw/scales_ai", use_auth_token=True)
+    base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit", use_auth_token=True)
+    model = PeftModel.from_pretrained(base_model, "scaleszw/scales_ai", use_auth_token=True)
 except ValueError as e:
     st.error(f"Error loading model: {e}")
     st.stop()
