@@ -2,6 +2,14 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForCausalLM
 from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
+from huggingface_hub import HfApi, login
+
+# Add your Hugging Face token here
+hf_token = "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"
+
+# Authenticate with Hugging Face
+login(token=hf_token)
+
 
 # Choose an embedding model
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
