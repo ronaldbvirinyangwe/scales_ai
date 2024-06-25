@@ -3,10 +3,14 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
-
+from huggingface_hub import login
 
 # Set the Hugging Face token
-os.environ['HUGGINGFACE_HUB_TOKEN'] = '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'
+token = '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'
+os.environ['HUGGINGFACE_HUB_TOKEN'] = token
+
+# Log in to Hugging Face
+login(token)
 
 # Choose an embedding model
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
