@@ -4,7 +4,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
 
-huggingface-cli login
 
 # Set the Hugging Face token
 os.environ['HUGGINGFACE_HUB_TOKEN'] = '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'
