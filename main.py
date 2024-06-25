@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
 
 # Set the Hugging Face token
-os.environ['HUGGINGFACE_HUB_TOKEN'] = 'your_huggingface_token_here'
+os.environ['HUGGINGFACE_HUB_TOKEN'] = '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'
 
 # Choose an embedding model
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
