@@ -5,6 +5,7 @@ from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
 from huggingface_hub import login
 
+
 # Set the Hugging Face token
 token = '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'
 os.environ['HUGGINGFACE_HUB_TOKEN'] = token
@@ -66,7 +67,7 @@ img { top:0; width:200px; background-size: cover; max-width: 100%; height: auto;
 """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.image("Scales Technologies Final Draft-01.svg")
+    
     
     # Create a history container on the sidebar
     history_container = st.sidebar.container()
@@ -100,14 +101,7 @@ st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 def generate_llama3_response(prompt):
     try:
         # Tokenize the prompt using your fine-tuned tokenizer
-        inputs = tokenizer(prompt, return_tensors="pt")
-        input_ids = inputs['input_ids'][0].tolist()
-        prompt_str = tokenizer.decode(input_ids, skip_special_tokens=True)
-        
-        # Retrieve context from the session state history
-        context = ""
-        if st.session_state.messages:
-            context = " ".join([msg["content"] for msg in st.session_state.messages if msg["role"] == "user"])
+        inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
         
         # Generate response
         outputs = model.generate(inputs['input_ids'], max_length=256)
