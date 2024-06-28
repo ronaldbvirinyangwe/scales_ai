@@ -4,7 +4,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from sentence_transformers import SentenceTransformer
 from peft import PeftModel, PeftConfig
 from huggingface_hub import login
-
+import requests
 
 # Set the Hugging Face token
 token = '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'
@@ -18,7 +18,6 @@ embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Load the model configuration and weights with error handling
 try:
-    # Ensure the paths are correct and the files exist at the specified locations
     tokenizer = AutoTokenizer.from_pretrained("scaleszw/scales_ai", use_auth_token=True)
     config = PeftConfig.from_pretrained("scaleszw/scales_ai", use_auth_token=True)
     base_model = AutoModelForCausalLM.from_pretrained("unsloth/llama-3-8b-bnb-4bit", use_auth_token=True)
@@ -52,6 +51,22 @@ class ConversationState:
 
 conversation_state = ConversationState()
 
+# Google Custom Search API setup
+GOOGLE_API_KEY = "AIzaSyDgjfLk1DJFm-rZtA5mkNWjRk4vsIyO_iIa"
+SEARCH_ENGINE_ID = "122c61a18e46b44f5"
+
+def google_search(query):
+    try:
+        response = requests.get(
+            'https://www.googleapis.com/customsearch/v1',
+            params={'q': query, 'key': GOOGLE_API_KEY, 'cx': SEARCH_ENGINE_ID},
+        )
+        results = response.json()
+        return results['items'] if 'items' in results else []
+    except Exception as e:
+        st.error(f"Error during Google search: {e}")
+        return []
+
 # App title
 st.set_page_config(page_title="Scales AI", layout="centered", initial_sidebar_state="auto")
 st.title("Welcome to Scales AI")
@@ -67,26 +82,19 @@ img { top:0; width:200px; background-size: cover; max-width: 100%; height: auto;
 """, unsafe_allow_html=True)
 
 with st.sidebar:
+    st.image("Scales Technologies Final Draft-01.svg")
     
-    
-    # Create a history container on the sidebar
     history_container = st.sidebar.container()
-    
-    # Add a title to the history container
     history_container.write("Conversation History")
     
-    # Add a clickable list of previous conversations to the history container
     for i, message in enumerate(conversation_state.get_history()):
         history_container.write(f"{i+1} {message['content']}")
     
-    # Add a horizontal rule to separate the history container from the rest of the sidebar
     st.sidebar.write("---")
 
-# Initialize or load chat history
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
-# Display chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
@@ -97,31 +105,23 @@ def clear_chat_history():
 
 st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 
-# Function for generating LLaMA3 response
 def generate_llama3_response(prompt):
     try:
-        # Tokenize the prompt using your fine-tuned tokenizer
         inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
-        
-        # Generate response
         outputs = model.generate(inputs['input_ids'], max_length=256)
         response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        
         return response
     except Exception as e:
         st.error(f"Error generating response: {e}")
         return ""
 
-# User-provided prompt
 if prompt := st.text_input("You:", key="user_input"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
-    # Generate a new response if the last message is not from assistant
     if st.session_state.messages[-1]["role"] != "assistant":
         with st.spinner("Thinking..."):
             response = generate_llama3_response(prompt)
             st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Update the history container to include clickable links that scroll to the corresponding message
 for i, message in enumerate(st.session_state.messages):
     history_container.write(f"{i+1} {message['content']}")
